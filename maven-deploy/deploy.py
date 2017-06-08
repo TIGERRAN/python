@@ -25,7 +25,11 @@ def checkConfig(project,*args):
             mission_list['before_shell'] = []
 
         mission_list['make'] = []
-        mission_list['make'].append(config.get('maven','mvn_args'))
+	mission_list['make'].append(config.get('maven','mvn_args'))
+	try:
+	    mission_list['make'].append(config.get('maven','pom_dir'))
+        except ConfigParser.NoOptionError:
+            pass 
 
         if len(config.options('make_after_shell')) > 0:
             mission_list['after_shell'] = []
@@ -56,10 +60,15 @@ def getSrc(project,git_repo,git_branch):
     else:
         return True
 
-def make(project,mvn_args):
+def make(project,mvn_args,pom_dir=None):
     src_dir = os.path.dirname(os.path.realpath(__file__))[0:-3] + 'project/' + project + '/src'
-    os.system('mvn %s -f %s | tee %s_console.out' %(mvn_args,src_dir,project))
-    f = open('%s_console.out' % project,'rb')
+    if pom_dir == None:
+        os.system('mvn %s -f %s | tee /home/tangchengwei/deploy/bin/console/%s_console.out' %(mvn_args,src_dir,project))
+    else:
+        src_dir = src_dir + pom_dir
+	#print src_dir
+        os.system('mvn %s -f %s | tee /home/tangchengwei/deploy/bin/console/%s_console.out' %(mvn_args,src_dir,project))
+    f = open('/home/tangchengwei/deploy/bin/console/%s_console.out' % project,'rb')
     for file in f.readlines():
         build_res1 = re.search(r'BUILD (.*)',file)
         if build_res1:
@@ -104,8 +113,6 @@ def get_args():
 
 
 
-# mission_list = checkConfig('trade_service')
-# print mission_list
 
 if __name__ == '__main__':
 
@@ -120,7 +127,10 @@ if __name__ == '__main__':
             if len(mission_list['before_shell']) != 0:
                 before_shell(*mission_list['before_shell'])
 
-            make(project,mission_list['make'][0])
+            if len(mission_list['make']) == 2:
+	        make(project,mission_list['make'][0],pom_dir=mission_list['make'][1])
+            else:            
+                make(project,mission_list['make'][0])
 
             if len(mission_list['after_shell']) != 0:
                 after_shell(*mission_list['after_shell'])
@@ -132,12 +142,5 @@ if __name__ == '__main__':
 
 
 
-
-
-# os.system('rm -rf /home/tangchengwei/.m2/repository/com/pzj')
-# getsrc_res = getSrc('travel_pc','git@10.0.18.4:mftour/travel-pc.git','feature/feature1.4.2')
-# if getsrc_res == True:
-    # build_res = make('travel_pc','clean package -Dmaven.test.skip=True')
-    # print build_res
 
 

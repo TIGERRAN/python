@@ -1,0 +1,45 @@
+{% extends 'sys/base.html' %}
+
+{% block title %}工程列表{% endblock %}
+
+{% block content %}
+
+    <div class="container">
+        <p><a href="{% url 'pj_add' %}" class="btn btn-default">工程添加</a></p>
+
+        <table class="table table-hover table-bordered">
+            <thead>
+            <tr>
+                <td>序号</td>
+                <td>系统名称</td>
+                <td>项目名称</td>
+                <td>GIT地址</td>
+                <td>数据库名称</td>
+                <td>创建时间</td>
+                <td>操作</td>
+            </tr>
+            </thead>
+            <tbody>
+            {% for items in pj_list %}
+                <tr>
+                    <td class="center">{{ items.num }}</td>
+                    <td>{{ items.sys_name }}</td>
+                    <td>{{ items.project_name }}</td>
+                    <td>{{ items.git_addr }}</td>
+                    <td>{{ items.db_name }}</td>
+                    <td>{{ items.c_t }}</td>
+                    <td><a href="{% url 'pj_edit' %}?pjt_id={{ items.pjt_id }}"> 编辑 </a>
+                        {% if request.session.member_id == 1 %}
+                            <a href="{% url 'pj_del' %}?pjt_id={{ items.pjt_id }}"> 删除 </a>
+                        {% endif %}
+                    </td>
+                    <!--<td>{{ items }}</td>-->
+                    <!--<td>{{items}}</td>-->
+                </tr>
+            {% endfor %}
+            </tbody>
+        </table>
+    </div>
+
+{% endblock %}
+

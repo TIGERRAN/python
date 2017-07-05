@@ -1,0 +1,111 @@
+{% extends 'DatabaseManager/base.html' %}
+
+{% block title %}编辑数据库{% endblock %}
+
+{% block head %}
+    <script type="text/javascript">
+        function defType() {
+            document.getElementByName("db_type").value = "{{ db.db_type }}";
+            document.getElementByName("db_manager_id").value = "{{ db.manager_id }}";
+        }
+        function check() {
+            var db_name = $("input[name='db_name']").val();
+            var host_ip = $("input[name='host_ip']").val();
+
+            var errMsg = [];
+            if (!host_ip || !host_ip.trim()) {
+                errMsg.push('数据库地址 不能为空！');
+            }
+            if (!port || !port.trim()) {
+                errMsg.push('端口 不能为空！');
+            }
+            if (errMsg.length > 0) {
+                layer.msg(errMsg.join("<br/>"));
+                return false;
+            }
+            return true;
+        }
+    </script>
+{% endblock %}
+
+{% block content %}
+
+    <div style="max-width: 800px;" class="container">
+        {% csrf_token %}
+
+        <h2 align="center">{{ db.db_name }} 数据库编辑</h2>
+        <form class="form-horizontal" role="form" method="post" onsubmit="return check();">
+
+            <div class="form-group">
+                <label class="col-sm-3 control-label"> 数据库名 </label>
+                <div class="col-sm-9">
+                    <p class="form-control-static">{{ db.db_name }}</p>
+                </div>
+            </div>
+
+            <div class="form-group">
+                <label class="col-sm-3 control-label"> 数据库类型 </label>
+                <div class="col-sm-9">
+                    <select name="db_type" class="form-control">
+                        <option value=1>单机</option>
+                        <option value=2>主从</option>
+                        <option value=3>集群</option>
+                    </select>
+                </div>
+            </div>
+
+            <div class="form-group">
+                <label class="col-sm-3 control-label"> 数据库地址 </label>
+                <div class="col-sm-9">
+                    <input name="host_ip" type="text" value="{{ db.host_ip }}" class="form-control">
+                </div>
+            </div>
+
+            <div class="form-group">
+                <label class="col-sm-3 control-label"> 端口 </label>
+                <div class="col-sm-9">
+                    <input name="port" type="text" value="{{ db.port }}" class="form-control">
+                </div>
+            </div>
+
+            <div class="form-group">
+                <label class="col-sm-3 control-label"> 环境 </label>
+                <div class="col-sm-9">
+                    <select name="env_id" id="env_id" class="form-control">
+                        <option value="{{ db.env_id }}">{{ db.env_name }}</option>
+                        {% for env in envs %}
+                            <option value={{ env.env_id }}>{{ env.env_name }}</option>
+                        {% endfor %}
+                    </select>
+                </div>
+            </div>
+
+
+            <div class="form-group">
+                <label class="col-sm-3 control-label"> 负责人 </label>
+                <div class="col-sm-9">
+                    <select name="db_manager_id" class="form-control">
+                        {% for dba in DBAs %}
+                            <option value={{ dba.id }}>{{ dba.username }}</option>
+                        {% endfor %}
+                    </select>
+                </div>
+            </div>
+
+
+            <div class="form-group">
+                <label class="col-sm-3 control-label"> 备注 </label>
+                <div class="col-sm-9">
+                    <textarea id="detail" name="detail" class="form-control">{{ db.detail }}</textarea>
+                </div>
+            </div>
+
+            <div class="form-group">
+                <div class="col-sm-offset-3 col-sm-9">
+                    <button type="submit" class="btn btn-default">提交</button>
+                </div>
+            </div>
+        </form>
+    </div>
+
+{% endblock %}

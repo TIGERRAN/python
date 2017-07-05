@@ -1,0 +1,47 @@
+{% extends 'DatabaseManager/base.html' %}
+
+{% block title %}用户组管理{% endblock %}
+
+{% block head %}
+{% endblock %}
+
+{% block content %}
+
+    <div class="container">
+        <p><a href="{% url 'add_database' %}" class="btn btn-default">数据库添加</a></p>
+
+        <table class="table table-hover table-bordered">
+            <thead>
+            <tr>
+                <!-- <td align=center>数据库ID</td> -->
+                <td align=center>数据库名</td>
+                <td align=center>数据库地址</td>
+                <td align=center>端口</td>
+                <td align="center">数据库环境</td>
+                <td align=center>负责人</td>
+                <td align=center>添加时间</td>
+                <!--                 <td align=center>备注</td> -->
+                <td align=center>操作</td>
+            </tr>
+            </thead>
+            <tbody>
+            {% for items in db %}
+                <tr>
+                    <!-- <td align=center>{{ items.db_id }}</td> -->
+                    <td align=center>{{ items.db_name }}</td>
+                    <td align=center>{{ items.host_ip }}</td>
+                    <td align=center>{{ items.port }}</td>
+                    <td align=center>{{ items.env }}</td>
+                    <td align=center>{{ items.manager }}</td>
+                    <td align=center>{{ items.c_t }}</td>
+                    <!--                     <td align=center>{{ items.detail }}</td> -->
+                    <td align=center><a href="{% url 'edit_database' %}?id={{ items.db_id }}">编辑</a>
+                        {% if request.session.member_id == 1 %}
+                            <a href="{% url 'del_database' %}?id={{ items.db_id }}">删除</a>
+                        {% endif %}</td>
+                </tr>
+            {% endfor %}
+            </tbody>
+        </table>
+    </div>
+{% endblock %}

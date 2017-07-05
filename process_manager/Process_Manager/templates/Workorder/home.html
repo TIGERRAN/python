@@ -1,0 +1,43 @@
+{% extends 'Workorder/base.html' %}
+
+{% block title %}{% endblock %}
+
+{% block head %}
+{% endblock %}
+
+{% block content %}
+
+    <div class="container">
+        <p><a href="{% url 'apply_order' %}" class="btn btn-default">系统上线申请</a></p>
+        <p><a href="{% url 'select_sys' %}" class="btn btn-default">项目上线申请</a></p>
+
+        <table class="table table-hover table-bordered">
+            <thead>
+            <tr>
+                <td align=center>审核单名称</td>
+                <td align=center>系统名</td>
+                <td align=center>产品负责人</td>
+                <td align=center>系统负责人</td>
+                <td align=center>上线申请人</td>
+                <td align=center>申请时间</td>
+                <td align=center>最新状态</td>
+            </tr>
+            </thead>
+            <tbody>
+            {% for items in orders %}
+                <tr>
+                    <td align=center><a
+                            href="{% url 'review' %}?id={{ items.id }}&pj_id={{ items.pj_id }}&type={{ items.order_type }}">{{ items.order_name }}</a>
+                    </td>
+                    <td align=center>{{ items.sys_name }}</td>
+                    <td align=center>{{ items.pd_name }}</td>
+                    <td align=center>{{ items.owner_name }}</td>
+                    <td align=center>{{ items.applicant_name }}</td>
+                    <td align=center>{{ items.c_t }}</td>
+                    <td align=center>{{ items.status }}</td>
+                </tr>
+            {% endfor %}
+            </tbody>
+        </table>
+    </div>
+{% endblock %}

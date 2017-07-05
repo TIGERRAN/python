@@ -1,0 +1,63 @@
+{% extends 'sys/base.html' %}
+
+{% block title %}添加工程{% endblock %}
+
+{% block head %}
+    <script type="application/javascript">
+        function check() {
+            var sysName = $("input[name='sys_name']").val();
+            if (!sysName || !sysName.trim()) {
+                layer.msg("系统名不能为空");
+                return false;
+            }
+            return true;
+        }
+    </script>
+{% endblock %}
+
+{% block content %}
+
+
+    <div style="max-width: 800px;" class="container">
+        <h2 align="center">添加系统</h2>
+        <form class="form-horizontal" role="form" method="post" onsubmit="return check();">
+            {% csrf_token %}
+
+            <div class="form-group">
+                <label class="col-sm-3 control-label">系统名称 </label>
+                <div class="col-sm-9">
+                    <input id="sys_name" name="sys_name" type="text" class="form-control">
+                </div>
+            </div>
+
+            <div class="form-group">
+                <label class="col-sm-3 control-label">系统负责人 </label>
+                <div class="col-sm-9">
+                    <select name="owner_id" id="owner_id" class="form-control">
+                        {% for user in users %}
+                            <option value="{{ user.user_id }}">{{ user.user_name }}</option>
+                        {% endfor %}
+                    </select>
+                </div>
+            </div>
+
+            <div class="form-group">
+                <label class="col-sm-3 control-label"> 产品负责人</label>
+                <div class="col-sm-9">
+                    <select name="pd_id" id="pd_id" class="form-control">
+                        {% for user in users %}
+                            <option value="{{ user.user_id }}">{{ user.user_name }}</option>
+                        {% endfor %}
+                    </select>
+                </div>
+            </div>
+
+            <div class="form-group">
+                <div class="col-sm-offset-3 col-sm-9">
+                    <button type="submit" class="btn btn-default">提交</button>
+                </div>
+            </div>
+        </form>
+    </div>
+
+{% endblock %}

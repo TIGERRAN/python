@@ -1,0 +1,35 @@
+{% extends 'UsersManager/base.html' %}
+
+{% block title %}用户详细{% endblock %}
+
+{% block head %}
+{% endblock %}
+
+{% block content %}
+    <div class="container">
+        <!--     <h1>用户</h1> -->
+        <!--     <form method="post"> -->
+        {% csrf_token %}
+        <table class="table table-hover table-bordered">
+            <tr>
+                <td>ID</td>
+                <td>用户名</td>
+                <td>姓名</td>
+                <td>邮箱</td>
+                <td>用户组</td>
+                <td>最后登录时间</td>
+            </tr>
+            {% for items in users %}
+                <tr>
+                    <td>{{ items.id }}</td>
+                    <td>{{ items.user }}</td>
+                    <td>{{ items.name }}</td>
+                    <td>{{ items.email }}</td>
+                    <td>{{ items.group }}</td>
+                    <td>{{ items.c_t }}</td>
+                </tr>
+            {% endfor %}
+        </table>
+
+    </div>
+{% endblock %}

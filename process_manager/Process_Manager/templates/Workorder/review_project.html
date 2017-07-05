@@ -1,0 +1,239 @@
+{% extends 'Workorder/base.html' %}
+
+{% block title %}{% endblock %}
+
+{% block head %}
+{% endblock %}
+
+{% block content %}
+
+    <div style="max-width: 800px;" class="container">
+        <form class="form-horizontal" role="form" method="post">
+            <h2 align="center">上线申请</h2>
+            {% csrf_token %}
+
+            <div class="form-group">
+                <label class="col-sm-3 control-label">上线单名称 </label>
+                <div class="col-sm-9">
+                    <p class="form-control-static">{{ order.order_id }}</p>
+                </div>
+            </div>
+
+            <div class="form-group">
+                <label class="col-sm-3 control-label">计划上线时间（stage） </label>
+                <div class="col-sm-9">
+                    <p class="form-control-static">{{ order.stage_time }}</p>
+                </div>
+            </div>
+
+            <div class="form-group">
+                <label class="col-sm-3 control-label">计划上线时间（online） </label>
+                <div class="col-sm-9">
+                    <p class="form-control-static">{{ order.online_time }}</p>
+                </div>
+            </div>
+
+            <div class="form-group">
+                <label class="col-sm-3 control-label"> 申请人</label>
+                <div class="col-sm-9">
+                    <p class="form-control-static">{{ order.applicant_name }}</p>
+                </div>
+            </div>
+
+            <div class="form-group">
+                <label class="col-sm-3 control-label"> 上线系统共{{ order.pj_count }}个:</label>
+                <div class="col-sm-9">
+                    <p class="form-control-static"></p>
+                </div>
+            </div>
+
+            {% for pj_item in order.pj_info %}
+                <div class="form-group">
+                    <label class="col-sm-3 control-label">{{ pj_item.sys_name }}-{{ pj_item.pj_name }}</label>
+                    <div class="col-sm-9">
+                        {% if pj_item.status >= 0 %}
+                            <p class="form-control-static"><a
+                                    href="{% url 'review' %}?id={{ pj_item.w_id }}&pj_id={{ pj_item.pj_id }}&type=2">{{ pj_item.status_cn }}</a>
+                            </p>
+                        {% else %}
+                            <p class="form-control-static"><a
+                                    href="{% url 'apply_project_order' %}?order={{ order.order_id }}&id={{ pj_item.pj_id }}">{{ pj_item.status_cn }}</a>
+                            </p>
+                        {% endif %}
+                    </div>
+                </div>
+            {% endfor %}
+
+            <div class="form-group">
+                <label class="col-sm-3 control-label"> 测试确认</label>
+                <div class="col-sm-9">
+                    {% if order.status == 0 and grp_id == 555 %}
+                        <button name="confirm" type="submit" value='1' class="btn btn-default">确认</button>
+                    {% elif order.status > 0 %}
+                        <p class="form-control-static">
+                            {% for status_item in status_list %}
+                                {% if status_item.status == 1 %}
+                                    {{ status_item.name }} {{ status_item.c_t }} 已确认
+                                {% endif %}
+                            {% endfor %}
+                        </p>
+                    {% endif %}
+                </div>
+            </div>
+
+            <div class="form-group">
+                <label class="col-sm-3 control-label"> 技术经理确认</label>
+                <div class="col-sm-9">
+                    {% if order.status == 1 and grp_id == 888 %}
+                        <button name="confirm" type="submit" value='2' class="btn btn-default">确认</button>
+                    {% elif order.status > 1 %}
+                        <p class="form-control-static">
+                            {% for status_item in status_list %}
+                                {% if status_item.status == 2 %}
+                                    {{ status_item.name }} {{ status_item.c_t }} 已确认
+                                {% endif %}
+                            {% endfor %}
+                        </p>
+                    {% endif %}
+                </div>
+            </div>
+
+            {% if order.db_change == 1 %}
+                <div class="form-group">
+                    <label class="col-sm-3 control-label"> stage环境-数据库</label>
+                    <div class="col-sm-9">
+                        {% if order.status == 2 and grp_id == 666 %}
+                            <button name="confirm" type="submit" value='3' class="btn btn-default">确认</button>
+                        {% elif order.status > 2 and order.db_change == 1 %}
+                            <p class="form-control-static">
+                                {% for status_item in status_list %}
+                                    {% if status_item.status == 3 %}
+                                        {{ status_item.name }} {{ status_item.c_t }} 已确认
+                                    {% endif %}
+                                {% endfor %}
+                            </p>
+                        {% endif %}
+                    </div>
+                </div>
+            {% endif %}
+
+            <div class="form-group">
+                <label class="col-sm-3 control-label">stage环境-系统 </label>
+                <div class="col-sm-9">
+                    {% if grp_id == 777 %}
+                        {% if order.status == 2 and order.db_change == 0 or order.status == 3 %}
+                            <button name="confirm" type="submit" value='4' class="btn btn-default">领取任务</button>
+                        {% elif order.status == 4 %}
+                            {% for status_item in status_list %}
+                                {% if status_item.status == 4 %}
+                                    {{ status_item.name }} {{ status_item.c_t }} 已领取任务
+                                    <button name="confirm" type="submit" value='5' class="btn btn-default">确认执行</button>
+                                {% endif %}
+                            {% endfor %}
+                        {% endif %}
+                    {% endif %}
+                    {% if order.status > 5 %}
+                        <p class="form-control-static">
+                            {% for status_item in status_list %}
+                                {% if status_item.status == 5 %}
+                                    {{ status_item.name }} {{ status_item.c_t }} 已确认执行
+
+                                {% endif %}
+                            {% endfor %}
+                        </p>
+                    {% endif %}
+                </div>
+            </div>
+
+            <div class="form-group">
+                <label class="col-sm-3 control-label">测试验收 </label>
+                <div class="col-sm-9">
+                    {% if order.status == 5 and grp_id == 555 %}
+                        <button name="confirm" type="submit" value='6' class="btn btn-default">确认</button>
+                    {% elif order.status > 5 %}
+                        <p class="form-control-static">
+                            {% for status_item in status_list %}
+                                {% if status_item.status == 6 %}
+                                    {{ status_item.name }} {{ status_item.c_t }} 已确认
+                                {% endif %}
+                            {% endfor %}
+                        </p>
+                    {% endif %}
+                </div>
+            </div>
+
+            <div class="form-group">
+                <label class="col-sm-3 control-label">技术总监确认 </label>
+                <div class="col-sm-9">
+                    {% if order.status == 6 and grp_id == 999 %}
+                        <button name="confirm" type="submit" value='7' class="btn btn-default">确认</button>
+                    {% elif order.status > 6 %}
+                        <p class="form-control-static">
+                            {% for status_item in status_list %}
+                                {% if status_item.status == 7 %}
+                                    {{ status_item.name }} {{ status_item.c_t }} 已确认
+                                {% endif %}
+                            {% endfor %}
+                        </p>
+                    {% endif %}
+                </div>
+            </div>
+
+            {% if order.db_change == 1 %}
+                <div class="form-group">
+                    <label class="col-sm-3 control-label"> online环境-数据库</label>
+                    <div class="col-sm-9">
+                        {% if order.status == 7 and grp_id == 666 %}
+                            <button name="confirm" type="submit" value='8' class="btn btn-default">确认</button>
+                        {% elif order.status > 7 and order.db_change == 1 %}
+                            <p class="form-control-static">
+                                {% for status_item in status_list %}
+                                    {% if status_item.status == 8 %}
+                                        {{ status_item.name }} {{ status_item.c_t }} 已确认
+                                    {% endif %}
+                                {% endfor %}
+                            </p>
+                        {% endif %}
+                    </div>
+                </div>
+            {% endif %}
+
+            <div class="form-group">
+                <label class="col-sm-3 control-label"> online环境-系统</label>
+                <div class="col-sm-9">
+                    {% if grp_id == 777 %}
+                        {% if order.status == 7 and order.db_change == 0 or order.status == 8 %}
+                            <button name="confirm" type="submit" value='9' class="btn btn-default">领取任务</button>
+                        {% elif order.status == 9 %}
+                            {% for status_item in status_list %}
+                                {% if status_item.status == 9 %}
+                                    {{ status_item.name }} {{ status_item.c_t }} 已领取任务
+                                    <button name="confirm" type="submit" value='10' class="btn btn-default">确认执行
+                                    </button>
+                                {% endif %}
+                            {% endfor %}
+                        {% endif %}
+                    {% endif %}
+                    {% if order.status > 10 %}
+                        <p class="form-control-static">
+                            {% for status_item in status_list %}
+                                {% if status_item.status == 10 %}
+                                    {{ status_item.name }} {{ status_item.c_t }} 已确认执行
+                                {% endif %}
+                            {% endfor %}
+                        </p>
+                    {% endif %}
+                </div>
+            </div>
+
+            <div class="form-group">
+                <label class="col-sm-3 control-label"> </label>
+                <div class="col-sm-9">
+                    <a href="{% url 'home' %}" class="btn btn-default">返回</a>
+                </div>
+            </div>
+
+        </form>
+    </div>
+
+{% endblock %}

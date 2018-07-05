@@ -1,0 +1,35 @@
+{% extends 'crm/index_back.html' %}
+
+
+{% block title1 %}
+index-sale
+{% endblock %}
+
+
+{% block link2 %}
+<script src="/static/js/jquery.min.js"></script>
+<script type="text/javascript">
+    'use strict';
+
+    $(function () {
+       var li_id = "#" + {{ li_id }};
+       $(li_id).addClass("active").siblings().removeClass("active");
+
+    });
+
+
+</script>
+{% endblock %}
+
+
+
+{% block content1 %}
+{#<h1 class="page-header"></h1>#}
+    <ol class="breadcrumb">
+        <li><a href="#">Title1</a></li>
+        <li><a href="#">Title1</a></li>
+        <li class="active">Title1</li>
+    </ol>
+    <hr>
+
+{% endblock %}

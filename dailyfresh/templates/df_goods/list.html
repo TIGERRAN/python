@@ -1,0 +1,212 @@
+{% extends "base_bt3.html" %}
+
+{% block title %}
+天天生鲜-商品列表
+{% endblock %}
+
+
+{% block link %}
+	<link rel="stylesheet" type="text/css" href="/static/css/reset.css">
+	<link rel="stylesheet" type="text/css" href="/static/css/main.css">
+    <script type="text/javascript">
+        $(function () {
+
+            var sort = {{ sort }}
+
+            if(sort == "0"){
+                $("#sort a:eq(0)").addClass("active").siblings().removeClass("active");
+            }
+
+            else if(sort == "1"){
+                $("#sort a:eq(1)").addClass("active").siblings().removeClass("active");
+            }
+
+            else if(sort == "2"){
+                $("#sort a:eq(2)").addClass("active").siblings().removeClass("active");
+            }
+
+
+
+
+            //
+
+            var $to_x = $('#show_count').offset().top;
+            var $to_y = $('#show_count').offset().left;
+
+            {% for item in page_list %}
+                // 购物车加入动画
+                var $add_x = $('#{{ item.id }}').offset().top;
+                var $add_y = $('#{{ item.id }}').offset().left;
+
+                $('#{{ item.id }}').click(function(){
+
+                    var $current_div = $(this).parent().next();
+
+                    $current_div.css({'display':'block'});
+
+                    var n = {{ forloop.counter }};
+                    if(n < 6){
+                        var j = 953 - 196*(n - 1);
+                        var p = -190;
+                    }else if(n < 11){
+                        var j = 953 - 196*(n - 6);
+                        var p = -420;
+                    }
+
+
+                    $current_div.stop().animate({
+                            'left': j,
+                            'top': p,
+                        },
+                        300, function() {
+                            $current_div.fadeOut('fast',function(){
+                                $current_div.css({
+                                    'left': 145,
+                                    'top': 193,
+
+                                });
+
+                                var goods_id = {{ item.id }};
+                                $.ajax({
+                                    url: '/cart/add/',
+                                    type: 'GET',
+                                    dataType: 'json',
+                                    data: {
+                                        goods_id: goods_id,
+                                        goods_count: 1,
+                                    },
+                                })
+                                .done(function(data) {
+                                    var num1 = data.cart_number;
+                                    $("#show_count").html(num1);
+                                })
+                                .fail(function() {
+                                    console.log("error");
+                                });
+
+
+                            });
+
+				    });
+
+
+
+                });
+
+            {% endfor %}
+
+
+        })
+
+    </script>
+    <style type="text/css">
+        .add_jump1{
+            height: 15px;
+            width: 15px;
+            background-color: red;
+            position: absolute;
+            left: 145px;
+            top: 193px;
+            display: none;
+        }
+
+
+    </style>
+{% endblock %}
+
+
+{% block main %}
+	<div class="navbar_con">
+		<div class="navbar clearfix">
+			<div class="subnav_con fl">
+				<h1>全部商品分类</h1>
+				<span></span>
+				<ul class="subnav">
+					<li><a href="/list?tid=3&index=1&sort=0" class="fruit">新鲜水果</a></li>
+					<li><a href="/list?tid=4&index=1&sort=0" class="seafood">海鲜水产</a></li>
+					<li><a href="/list?tid=5&index=1&sort=0" class="meet">猪牛羊肉</a></li>
+					<li><a href="/list?tid=6&index=1&sort=0" class="egg">禽类蛋品</a></li>
+					<li><a href="/list?tid=7&index=1&sort=0" class="vegetables">新鲜蔬菜</a></li>
+					<li><a href="/list?tid=8&index=1&sort=0" class="ice">速冻食品</a></li>
+				</ul>
+			</div>
+			<ul class="navlist fl">
+				<li><a href="">首页</a></li>
+				<li class="interval">|</li>
+				<li><a href="">手机生鲜</a></li>
+				<li class="interval">|</li>
+				<li><a href="">抽奖</a></li>
+			</ul>
+		</div>
+	</div>
+
+	<div class="breadcrumb">
+		<a href="#">全部分类</a>
+		<span>></span>
+		<a href="#">{{ type_object }}</a>
+	</div>
+
+	<div class="main_wrap clearfix">
+		<div class="l_wrap fl clearfix">
+			<div class="new_goods">
+				<h3>新品推荐</h3>
+				<ul>
+                    {% for item in new_list %}
+					<li>
+						<a href="/{{ item.id }}/"><img src="/static/{{ item.gpic }}"></a>
+						<h4><a href="#">{{ item.gtitle }}</a></h4>
+						<div class="prize">￥{{ item.gprice }}</div>
+					</li>
+                    {% endfor %}
+				</ul>
+			</div>
+		</div>
+
+		<div class="r_wrap fr clearfix">
+			<div id="sort" class="sort_bar">
+				<a href="/list?tid={{ type_id }}&index=1&sort=0" class="active">默认</a>
+				<a href="/list?tid={{ type_id }}&index=1&sort=1">价格</a>
+				<a href="/list?tid={{ type_id }}&index=1&sort=2">人气</a>
+			</div>
+
+			<ul class="goods_type_list clearfix">
+                {% for item in page_list %}
+				<li>
+					<a href="/{{ item.id }}/"><img src="/static/{{ item.gpic }}"></a>
+					<h4><a href="detail.html">{{ item.ptitle }}</a></h4>
+					<div class="operate">
+						<span class="prize">￥{{ item.gprice }}</span>
+						<span class="unit">{{ item.gprice }}/{{ item.gunit }}</span>
+						<a href="javascript:;" class="add_goods" title="加入购物车" id="{{ item.id }}"></a>
+					</div>
+                    <div class="add_jump1"></div>
+				</li>
+                {% endfor %}
+
+			</ul>
+
+			<div class="pagenation">
+
+                {% if page_list.has_previous %}
+                    <a href="/list?tid={{ type_id }}&index={{ page_list.previous_page_number }}&sort={{ sort }}">上一页></a>
+                {% endif %}
+
+                {% for item in page_list.paginator.page_range %}
+
+                    {% if page_list.number == item %}
+                        <a class="active">{{ item }}</a>
+                    {% else %}
+                        <a href="/list?tid={{ type_id }}&index={{ item }}&sort={{ sort }}">{{ item }}</a>
+                    {% endif %}
+                {% endfor %}
+
+                {% if page_list.has_next %}
+                    <a href="/list?tid={{ type_id }}&index={{ page_list.next_page_number }}&sort={{ sort }}"><下一页</a>
+                {% endif %}
+
+			</div>
+		</div>
+	</div>
+
+{% endblock %}
+

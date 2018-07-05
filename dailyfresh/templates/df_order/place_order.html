@@ -1,0 +1,167 @@
+{% extends "base_bt4.html" %}
+
+
+{% block title %}
+<title>天天生鲜-提交订单</title>
+{% endblock %}
+
+
+{% block link %}
+    <script type="text/javascript" src="/static/js/jquery.cookie.js"></script>
+    <script type="text/javascript" src="/static/js/csrftoken.js"></script>
+    <script type="text/javascript">
+        'use strict';
+        $(function () {
+            var $a = $('.col07');
+            var goods_number = $a.length;
+            var total1 = 0;
+            var total2 = 0;
+            var goods_ids = '';
+            var address = $("#address").text();
+
+            total2 = parseFloat(total2);
+
+            $a.each(function (index) {
+                var aa = parseFloat($(this).find('span').html());
+                total1 = parseFloat(total1);
+
+                total1 = (Number(aa + total1).toFixed(2));
+
+            });
+
+            total2 = (Number(10 + parseFloat(total1)).toFixed(2));
+
+            $("#settlement em").html(goods_number);
+            $("#settlement b").html(total1 + '元');
+            $("#settlement").next().next().find('b').html(total2 + '元');
+
+
+            {% for item in goodsinfo %}
+                goods_ids += {{ item.obj.id }} + ',';
+            {% endfor %}
+
+            console.log(goods_ids);
+
+            $.ajax({
+                url: '/order/handle_order/',
+                type: 'post',
+                dataType: 'json',
+                data: {
+                    goods_ids: goods_ids,
+                    total: total2,
+                    address: address,
+                },
+            })
+            .done(function(data) {
+                if(data.status == 'ok'){
+                    location.href = '/user/order/';
+                }
+
+            })
+            .fail(function() {
+                console.log("error");
+            });
+
+
+        })
+    </script>
+{% endblock %}
+
+
+{% block title2 %}
+提交订单
+{% endblock %}
+
+{% block main %}
+<h3 class="common_title">确认收货地址</h3>
+
+	<div class="common_list_con clearfix">
+		<dl>
+			<dt>寄送到：</dt>
+			<dd id="address"><input type="radio" name="" checked="">{{ recvinfo.recv_addr }}（{{ recvinfo.recv_username }} 收） 电话: {{ recvinfo.recv_phone }} 邮编: {{ recvinfo.recv_postcode }}</dd>
+		</dl>
+		<a href="/user/site/" class="edit_site">编辑收货地址</a>
+
+	</div>
+
+	<h3 class="common_title">支付方式</h3>
+	<div class="common_list_con clearfix">
+		<div class="pay_style_con clearfix">
+			<input type="radio" name="pay_style" checked>
+			<label class="cash">货到付款</label>
+			<input type="radio" name="pay_style">
+			<label class="weixin">微信支付</label>
+			<input type="radio" name="pay_style">
+			<label class="zhifubao"></label>
+			<input type="radio" name="pay_style">
+			<label class="bank">银行卡支付</label>
+		</div>
+	</div>
+
+	<h3 class="common_title">商品列表</h3>
+
+	<div class="common_list_con clearfix">
+		<ul class="goods_list_th clearfix">
+			<li class="col01">商品名称</li>
+			<li class="col02">商品单位</li>
+			<li class="col03">商品价格</li>
+			<li class="col04">数量</li>
+			<li class="col05">小计</li>
+		</ul>
+        {% for item in goodsinfo %}
+		<ul class="goods_list_td clearfix">
+			<li class="col01">{{ forloop.counter }}</li>
+			<li class="col02"><img src="/static/{{ item.obj.gpic }}"></li>
+			<li class="col03">{{ item.obj.gtitle }}</li>
+			<li class="col04">{{ item.obj.gunit }}</li>
+			<li class="col05">{{ item.obj.gprice }}元</li>
+			<li class="col06">{{ item.number }}</li>
+            {% load multiplication %}
+            <li class="col07"><span>{% multiplication %}{{ item.obj.gprice }},{{ item.number }}{% endmultiplication %}</span>元</li>
+		</ul>
+	    {% endfor %}
+
+	</div>
+
+	<h3 class="common_title">总金额结算</h3>
+
+	<div class="common_list_con clearfix">
+		<div class="settle_con">
+			<div id="settlement" class="total_goods_count">共<em>2</em>件商品，总金额<b>42.60元</b></div>
+			<div class="transit">运费：<b>10元</b></div>
+			<div class="total_pay">实付款：<b>52.60元</b></div>
+		</div>
+	</div>
+
+	<div class="order_submit clearfix">
+		<a href="javascript:;" id="order_btn">提交订单</a>
+	</div>
+
+{% endblock %}
+
+    {% comment %}
+	<div class="popup_con">
+		<div class="popup">
+			<p>订单提交成功！</p>
+		</div>
+		
+		<div class="mask"></div>
+	</div>
+
+
+	<script type="text/javascript">
+		$('#order_btn').click(function() {
+			localStorage.setItem('order_finish',2);
+
+			$('.popup_con').fadeIn('fast', function() {
+
+				setTimeout(function(){
+					$('.popup_con').fadeOut('fast',function(){
+						window.location.href = 'index_back.html';
+					});	
+				},3000)
+				
+			});
+		});
+	</script>
+    {% endcomment %}

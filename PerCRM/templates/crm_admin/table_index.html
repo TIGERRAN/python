@@ -1,0 +1,136 @@
+{% extends 'crm_admin/models_index.html' %}
+{% load rend_admin_class %}
+
+{% block title1 %}
+table-index
+{% endblock %}
+
+
+{% block link11 %}
+    <style type="text/css">
+        .excute_menu{
+            height: 25px;
+
+        }
+
+        .btm-menu{
+            position: relative;
+            height: 50px;
+            border-bottom: 1px solid #a8a8a8;
+            list-style-type: none;
+            padding-left: 15px;
+            padding-right: 15px;
+        }
+
+        .le-btm{
+            float: left;
+        }
+
+        .ri-btm{
+            float: right;
+        }
+
+
+
+    </style>
+{% endblock %}
+
+
+{% block path_menu %}
+ <ol class="breadcrumb" style="background-color: #DBDBDB" >
+    <li><a href="/crm_admin/">Home</a></li>
+     <li><a href="/crm_admin/{{ parent_url }}/">{{ parent_url }}</a></li>
+    <li class="active">{{ current_url }}</li>
+</ol>
+
+{% endblock %}
+
+
+{% block le-title %}
+选择 客户表 来修改
+{% endblock %}
+
+{% block ri-title %}
+增加客户表
+{% endblock %}
+
+
+
+{% block models_table %}
+    <div style="margin-bottom: 10px;">
+        &nbsp;&nbsp;&nbsp;动作&nbsp;&nbsp;
+        <select class="excute_menu">
+          <option>---------</option>
+          <option>删除所选的 客户表</option>
+        </select>
+        <input type="button" value="执行" style="font-size:12px">
+    </div>
+    <div class="row" style="padding-left: 15px;">
+      <table class="table table-hover table-striped">
+        <thead>
+
+            <tr class="warning">
+                <th style="width: 40px"><input type="checkbox"></th>
+                {% for item in tableObjHeadList %}
+                <th>{{ item }}</th>
+                {% endfor %}
+            </tr>
+        </thead>
+        <tbody style="border-bottom: 1px solid #DDDDDD">
+            {% for item in page_list %}
+            <tr>
+                <td style="width: 40px"><input type="checkbox"></td>
+                {% for jitem in tableObjDisplayList %}
+                    {% if forloop.first %}
+                        <td><a href="{{ request.path }}{% reduce_attr item jitem %}/change/">{% reduce_attr item jitem %}</a></td>
+                    {% else %}
+                        <td>{% reduce_attr item jitem %}</td>
+                    {% endif %}
+                {% endfor %}
+            </tr>
+            {% endfor %}
+
+        </tbody>
+      </table>
+      
+      <div>
+          <ul class="btm-menu">
+              <li class="le-btm">
+                  <nav aria-label="...">
+                      <ul class="pagination"  style="margin: 0px;">
+                        {% if page_list.has_previous %}
+                        <li class="disabled"><a href="{{ request.path }}?page={{ page_list.previous_page_number }}" aria-label="Previous"><span aria-hidden="true">«</span></a></li>
+                        {% endif %}
+
+                        {% for item in page_list.paginator.page_range %}
+                            {% if page_list.number == item %}
+                                <li class="active"><a href="javacript:;">{{ item }} <span class="sr-only">(current)</span></a></li>
+                            {% else %}
+                                <li><a href="{{ request.path }}?page={{ item }}">{{ item }}</a></li>
+                            {% endif %}
+                        {% endfor %}
+
+                        {% if page_list.has_next %}
+                        <li>
+                            <a href="{{ request.path }}?page={{ page_list.next_page_number }}" aria-label="Next"><span aria-hidden="true">»</span></a>
+                        </li>
+                        {% endif %}
+                        &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
+                        <span style="line-height: 34px;">
+                            3 客户表&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
+                        </span>
+                      </ul>
+
+                  </nav>
+
+
+              </li>
+              <li class="ri-btm"><button class="btn btn-primary">保存</button></li>
+          </ul>
+      </div>
+
+
+    </div>
+
+{% endblock %}
+

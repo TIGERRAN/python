@@ -1,0 +1,91 @@
+{% extends "base_bt2.html" %}
+
+{% block title %}
+{{ title }}
+{% endblock %}
+
+
+{% block title2 %}
+用户中心
+{% endblock %}
+
+
+{% block h1 %}
+    订单信息
+{% endblock %}
+
+
+{% block order_active %}
+class="active"
+{% endblock %}
+
+
+{% block main %}
+
+        <div class="right_content clearfix">
+            <h3 class="common_title2">全部订单</h3>
+            {% for item in page_list %}
+            <ul class="order_list_th w978 clearfix">
+                <li class="col01">{{ item.odate|date:"Y-m-d H:i:s" }}</li>
+                <li class="col02">订单号：{{ item.oid }}</li>
+                <li class="col02 stress">{{ item.oIsPay|yesno:"已支付,未支付,None" }}</li>
+            </ul>
+
+                    <table class="order_list_table w980">
+                    <tbody>
+                        <tr>
+                            <td width="55%">
+                                {% for item2 in item.orderdetail_set.all %}
+                                <ul class="order_goods_list clearfix">
+                                    <li class="col01"><img src="/static/{{ item2.goods.gpic }}"></li>
+                                    <li class="col02">{{ item2.goods.gtitle }}<em>{{ item2.goods.gprice }}元/{{ item2.goods.gunit }}</em></li>
+                                    <li class="col03">{{ item2.count }}</li>
+                                    {% load multiplication %}
+                                    <li class="col04">{% multiplication %}{{ item2.goods.gprice }},{{ item2.count }}{% endmultiplication %}元</li>
+                                </ul>
+                                {% endfor %}
+{#                                <ul class="order_goods_list clearfix">#}
+{#                                    <li class="col01"><img src="images/goods02.jpg"></li>#}
+{#                                    <li class="col02">嘎啦苹果嘎啦苹果<em>11.80元/500g</em></li>#}
+{#                                    <li class="col03">1</li>#}
+{#                                    <li class="col04">11.80元</li>#}
+{#                                </ul>#}
+                            </td>
+
+                            <td width="15%">{{ item.oTotal }}元</td>
+                            <td width="15%">{{ item.oIsPay|yesno:"已支付,待付款,None" }}</td>
+                            <td width="15%"><a href="#" class="oper_btn">去付款</a></td>
+                        </tr>
+                    </tbody>
+                </table>
+            {% endfor %}
+
+                <div class="pagenation">
+                {% if page_list.has_previous %}
+                    <a href="/user/order/?index={{ page_list.previous_page_number }}">上一页></a>
+                {% endif %}
+
+                {% for item in page_list.paginator.page_range %}
+
+                    {% if page_list.number == item %}
+                        <a class="active">{{ item }}</a>
+                    {% else %}
+                        <a href="/user/order/?index={{ item }}">{{ item }}</a>
+                    {% endif %}
+                {% endfor %}
+
+                {% if page_list.has_next %}
+                    <a href="/user/order/?index={{ page_list.next_page_number }}"><下一页</a>
+                {% endif %}
+
+
+{#                <a href="#"><上一页</a>#}
+{#                <a href="#" class="active">1</a>#}
+{#                <a href="#">2</a>#}
+{#                <a href="#">3</a>#}
+{#                <a href="#">4</a>#}
+{#                <a href="#">5</a>#}
+{#                <a href="#">下一页></a>#}
+            </div>
+    </div>
+{% endblock %}

@@ -1,0 +1,25 @@
+{% extends 'base_bt1.html' %}
+
+{% block title %}
+注册成功
+{% endblock %}
+
+{% block link %}
+    <script type="text/javascript" src="/static/js/jquery-1.12.4.min.js"></script>
+    <script type="text/javascript">
+        $(function(){
+            function go() {
+                window.location = "/user/login/";
+            }
+
+            setTimeout(go, 3000);
+
+
+        })
+    </script>
+{% endblock %}
+
+
+{% block body %}
+    <h1>注册成功! 页面在3秒后跳转...</h1>
+{% endblock %}

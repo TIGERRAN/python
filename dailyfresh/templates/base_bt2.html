@@ -1,0 +1,75 @@
+{% extends "base_bt1.html" %}
+
+
+{% block link %}
+    <link rel="stylesheet" type="text/css" href="/static/css/reset.css">
+    <link rel="stylesheet" type="text/css" href="/static/css/main.css">
+    <link rel="stylesheet" type="text/css" href="/static/css/reset.css">
+    <style type="text/css">
+        .fixMargin{
+            margin-right: -1px;
+        }
+
+    </style>
+    <script type="text/javascript" src="/static/js/jquery-1.12.4.min.js"></script>
+    {% block link2 %}{% endblock %}
+{% endblock %}
+
+{% block body %}
+
+    <div class="header_con">
+		<div class="header">
+			<div class="welcome fl">欢迎来到天天生鲜!</div>
+			<div class="fr">
+                {% if request.session.user_name|default:'' != '' %}
+                    <div class="login_btn fl">
+					    欢迎您：<em>{{ request.session.user_name }}</em>
+				        <span>|</span>
+					    <a href="/user/logout/">退出</a>
+                    </div>
+
+                {% else %}
+                    <div class="login_btn fl">
+                        <a href="/user/login/">登录</a>
+                        <span>|</span>
+					    <a href="/user/register/">注册</a>
+				    </div>
+                {% endif %}
+
+				<div class="user_link fl">
+					<span>|</span>
+					<a href="/user/info/">用户中心</a>
+					<span>|</span>
+					<a href="/cart/">我的购物车</a>
+					<span>|</span>
+					<a href="#">我的订单</a>
+				</div>
+			</div>
+		</div>
+	</div>
+
+	<div class="search_bar clearfix">
+		<a href="/" class="logo fl"><img src="/static/images/logo.png"></a>
+		<div class="sub_page_name fl">|&nbsp;&nbsp;&nbsp;&nbsp;{% block title2 %}{% endblock %}</div>
+		<div class="search_con fr">
+			<input type="text" class="input_text fl" name="" placeholder="搜索商品">
+			<input type="button" class="input_btn fr fixMargin" name="" value="搜索">
+		</div>
+	</div>
+
+    <div class="main_con clearfix">
+		<div class="left_menu_con clearfix">
+			<h3>{% block h1 %}{% endblock %}</h3>
+			<ul>
+				<li><a href="/user/info/" {% block info_active %}{% endblock %}>· 个人信息</a></li>
+				<li><a href="/user/order/" {% block order_active %}{% endblock %}>· 全部订单</a></li>
+				<li><a href="/user/site/" {% block site_active %}{% endblock %}>· 收货地址</a></li>
+			</ul>
+		</div>
+        {% block main %}{% endblock %}
+
+	</div>
+
+
+
+{% endblock %}

@@ -1,6 +1,0 @@
-[root@BJ-LOCAL-NEWTEST-10-0-2-130 backup]# cat  /tmp/rpt_db.txt 
-
-  10.0.2.130   new_test_db  
-status=success
-size=145K
-dir=/home/backup/new_test_db_20170224.sql.tar.gz 
